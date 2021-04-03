@@ -36,9 +36,6 @@ db = MongoEngine()
 db.init_app(app)
 
 
-class CustomRegisterForm(RegisterForm):
-    role = StringField(_('Role'), validators=[DataRequired()])
-
 # Define the User document.
 # NB: Make sure to add flask_user UserMixin !!!
 
