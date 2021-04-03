@@ -3,6 +3,7 @@ import os
 from flask import Flask, Response, request, render_template_string
 from flask_mongoengine import MongoEngine
 from flask_user import login_required, UserManager, UserMixin
+from flask_user.forms import RegisterForm
 
 
 # Class-based application configuration
@@ -35,8 +36,13 @@ db = MongoEngine()
 db.init_app(app)
 
 
+class CustomRegisterForm(RegisterForm):
+    role = StringField(_('Role'), validators=[DataRequired()])
+
 # Define the User document.
 # NB: Make sure to add flask_user UserMixin !!!
+
+
 class User(db.Document, UserMixin):
     active = db.BooleanField(default=True)
 
