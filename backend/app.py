@@ -5,7 +5,7 @@ from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from forms import LoginForm, RegistrationForm
-
+from models import ROLES
 # Class-based application configuration
 class ConfigClass(object):
     """ Flask application config """
@@ -64,6 +64,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
+        user.role = form.role.data
         user.set_password(form.password.data)
         user.save()
         flash('Congratulations, you are now a registered user!')

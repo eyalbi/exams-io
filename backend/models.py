@@ -2,6 +2,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_mongoengine import MongoEngine
 
+ROLES = ('Student', 'Lecturer', 'Admin')
+
 db = MongoEngine()
 class User(UserMixin, db.Document):
     # User authentication information
@@ -13,7 +15,7 @@ class User(UserMixin, db.Document):
     last_name = db.StringField(default='')
 
     # Relationships
-    roles = db.ListField(db.StringField(), default=[])
+    role = db.StringField(default='', choices = ROLES)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

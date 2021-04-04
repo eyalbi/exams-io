@@ -32,6 +32,15 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <div class="input-group">
+            <span class="input-group-addon">role</span>
+                <select name="role" class="selectpicker form-control">
+                  {% for o in form.role %}
+                  <option value="{{ o.name }}">{{ o }}</option>
+                  {% endfor %}
+                </select>
+        </div>
+
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}
