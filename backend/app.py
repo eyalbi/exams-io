@@ -1,10 +1,10 @@
 import os
 
-from flask import Flask, Response, request, render_template_string
+from flask import Flask, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for
 from flask_mongoengine import MongoEngine
-from flask_user import login_required, UserManager, UserMixin
-from flask_user.forms import RegisterForm
-
+from bson.objectid import ObjectId
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+from forms import LoginForm, RegistrationForm
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -21,78 +21,60 @@ class ConfigClass(object):
         'db': 'exams-io'
     }
 
-    # Flask-User settings
-    # Shown in and email templates and page footers
-    USER_APP_NAME = "Flask-User MongoDB App"
-    USER_ENABLE_EMAIL = False      # Disable email authentication
-    USER_ENABLE_USERNAME = True    # Enable username authentication
-    USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
-
 
 app = Flask(__name__)
 app.config.from_object(__name__+'.ConfigClass')
 
 db = MongoEngine()
 db.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+from models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.objects.get(id=user_id)
 
 
-# Define the User document.
-# NB: Make sure to add flask_user UserMixin !!!
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.objects(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
-class User(db.Document, UserMixin):
-    active = db.BooleanField(default=True)
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        user.save()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
 
-    # User authentication information
-    username = db.StringField(default='')
-    password = db.StringField()
-
-    # User information
-    first_name = db.StringField(default='')
-    last_name = db.StringField(default='')
-
-    # Relationships
-    roles = db.ListField(db.StringField(), default=[])
-
-
-# Setup Flask-User and specify the User data-model
-user_manager = UserManager(app, db, User)
-
-
-# The Home page is accessible to anyone
 @app.route('/')
-def home_page():
-    # String-based templates
-    return render_template_string("""
-        {% extends "flask_user_layout.html" %}
-        {% block content %}
-            <h2>Home page</h2>
-            <p><a href={{ url_for('user.register') }}>Register</a></p>
-            <p><a href={{ url_for('user.login') }}>Sign in</a></p>
-            <p><a href={{ url_for('home_page') }}>Home page</a> (accessible to anyone)</p>
-            <p><a href={{ url_for('member_page') }}>Member page</a> (login required)</p>
-            <p><a href={{ url_for('user.logout') }}>Sign out</a></p>
-        {% endblock %}
-        """)
-
-
-# The Members page is only accessible to authenticated users via the @login_required decorator
-@app.route('/members')
-@login_required    # User must be authenticated
-def member_page():
-    # String-based templates
-    return render_template_string("""
-        {% extends "flask_user_layout.html" %}
-        {% block content %}
-            <h2>Members page</h2>
-            <p><a href={{ url_for('user.register') }}>Register</a></p>
-            <p><a href={{ url_for('user.login') }}>Sign in</a></p>
-            <p><a href={{ url_for('home_page') }}>Home page</a> (accessible to anyone)</p>
-            <p><a href={{ url_for('member_page') }}>Member page</a> (login required)</p>
-            <p><a href={{ url_for('user.logout') }}>Sign out</a></p>
-        {% endblock %}
-        """)
-
+@app.route('/index')
+@login_required
+def index():
+    return render_template("index.html", title='Home Page')
 
 if __name__ == '__main__':
     app.run()
