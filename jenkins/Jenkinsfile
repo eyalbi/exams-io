@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python -m py_compile app.py'
+                sh 'python -m py_compile workspace@script/backend/app.py'
             }
         }
     }
