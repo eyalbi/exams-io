@@ -3,12 +3,12 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/app.py'
+                sh 'python -m virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/app.py'
             }
         }
         stage('test') {
             steps {
-                sh 'virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/tests.py'
+                sh 'python -m virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/tests.py'
             }
         }
     }
