@@ -67,6 +67,8 @@ def register():
         if form.validate_on_submit():
             user = User(username=form.username.data, email=form.email.data)
             user.role = form.role.data
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
             user.set_password(form.password.data)
             user.save()
             flash('Congratulations, you are now a registered user!')
@@ -84,8 +86,12 @@ def index():
     if user.role == 'Student':
         return render_template('Student.html',user = user)
     elif user.role == 'Lecturer': 
-        return render_template('Student.html',user = user)
-    return render_template("Lecturer.html", title='Home Page')
+        return render_template('Lecturer.html', user = user)
+    elif user.role == 'Admin':
+        return render_template("Admin.html", title='Home Page')
+    else:
+        return redirect(url_for('index'))
+
 
 
 @app.route('/Student/Exams')
@@ -109,6 +115,24 @@ def Student_Grades():
 def Student_personal_info():
     u = User.objects(username=current_user.username).first()
     return render_template("PersonalInfo.html", title='info Page', user = u)
+
+
+@app.route('/Lecturer/Exams')
+@login_required
+def Lec_Exams():
+    return render_template('UploadExams.html')
+
+@app.route('/Lecturer/Messages')
+@login_required
+def Lec_Messages():
+   return render_template("messages.html", title='Messages Page')
+
+@app.route('/Lecturer/PersonalInfo')
+@login_required
+def Lec_personal_info():
+    u = User.objects(username=current_user.username).first()
+    return render_template("PersonalInfo.html", title='info Page', user = u)
+
 
 if __name__ == '__main__':
     app.run()
