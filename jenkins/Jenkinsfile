@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                echo 'This is a build'
+                sh 'python -m py_compile app.py'
             }
         }
     }
