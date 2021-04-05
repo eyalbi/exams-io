@@ -75,7 +75,7 @@ def register():
             return redirect(url_for('login'))
         return render_template('register.html', title='Register', form=form)
     except :
-        flash('username Allready exists')
+        flash('username Already exists')
         return redirect('/register')
 
 @app.route('/')
