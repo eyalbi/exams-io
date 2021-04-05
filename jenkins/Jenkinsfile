@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python ../workspace@script/backend/app.py'
+                echo 'This is a build'
             }
         }
     }
