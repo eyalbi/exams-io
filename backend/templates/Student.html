@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hello {{user.username}} </h1>
+
+<div>
+    <div>
+        <a href="{{url_for('Student_exams')}}">Exams</a>
+    </div>
+    <div>
+        <a href="{{url_for('Student_messeges')}}">Messeges</a>
+    </div>
+    <div>
+        <a href="{{url_for('Student_Grades')}}">Grades</a>
+    </div>
+    <div>
+        <a href="{{url_for('Student_personal_info')}}">Personal info</a>
+    </div>
+
+
+</div>
+
+
+
+
+{% endblock %}

@@ -17,6 +17,8 @@ class User(UserMixin, db.Document):
     # Relationships
     role = db.StringField(default='', choices = ROLES)
 
+    def get_role (self):
+        return self.role
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

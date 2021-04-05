@@ -40,6 +40,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+  
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -75,7 +76,35 @@ def register():
 @app.route('/index')
 @login_required
 def index():
-    return render_template("index.html", title='Home Page')
+    user = User.objects(username=current_user.username).first()
+    if user.role == 'Student':
+        return render_template('Student.html',user = user)
+    elif user.role == 'Lecturer': 
+        return render_template('Student.html',user = user)
+    return render_template("Lecturer.html", title='Home Page')
+
+
+@app.route('/Student/Exams')
+@login_required
+def Student_exams():
+   return render_template("exams.html", title='Exams Page')
+
+
+@app.route('/Student/Messages')
+@login_required
+def Student_messeges():
+   return render_template("messages.html", title='Messages Page')
+
+@app.route('/Student/Grades')
+@login_required
+def Student_Grades():
+   return render_template("Grades.html", title='Grades Page')
+
+@app.route('/Student/PersonalInfo')
+@login_required
+def Student_personal_info():
+    u = User.objects(username=current_user.username).first()
+    return render_template("PersonalInfo.html", title='info Page', user = u)
 
 if __name__ == '__main__':
     app.run()
