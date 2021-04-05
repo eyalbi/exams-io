@@ -8,7 +8,11 @@ pipeline {
                 }
             }
             steps {
-                sh 'pip install virtualenv && virtualenv env && . env/bin/activate && pip install -r backend/requirements.txt'
+                sh '''
+                    python -m venv .venv
+                    . .venv/bin/activate
+                    pip intall -r backend/requirements.txt
+                '''
             }
         }
         stage('test') {
@@ -18,7 +22,12 @@ pipeline {
                 }
             }
             steps {
-                sh 'pip install virtualenv && virtualenv env && . env/bin/activate && pip install -r backend/requirements.txt && python backend/tests.py'
+                 sh '''
+                    python -m venv .venv
+                    . .venv/bin/activate
+                    pip intall -r backend/requirements.txt
+                    python backend/test.py
+                '''
             }
         }
     }
