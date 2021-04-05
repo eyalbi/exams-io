@@ -62,15 +62,19 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.role = form.role.data
-        user.set_password(form.password.data)
-        user.save()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    try:
+        form = RegistrationForm()
+        if form.validate_on_submit():
+            user = User(username=form.username.data, email=form.email.data)
+            user.role = form.role.data
+            user.set_password(form.password.data)
+            user.save()
+            flash('Congratulations, you are now a registered user!')
+            return redirect(url_for('login'))
+        return render_template('register.html', title='Register', form=form)
+    except :
+        flash('username Allready exists')
+        return redirect('/register')
 
 @app.route('/')
 @app.route('/index')
