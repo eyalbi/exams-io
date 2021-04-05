@@ -1,14 +1,24 @@
 pipeline {
-    agent { docker { image 'python:3.9.2' } }
+    agent none
     stages {
         stage('build') {
+            agent {
+                docker {
+                    image 'python:3.9.2' 
+                }
+            }
             steps {
-                sh 'pip install virtualenv && python -m virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/app.py'
+                sh 'virtualenv env && . env/bin/activate && pip install -r backend/requirements.txt'
             }
         }
         stage('test') {
+            agent {
+                docker {
+                    image 'python:3.9.2' 
+                }
+            }
             steps {
-                sh 'python -m virtualenv venv && . venv/bin/activate && pip install -r backend/requirements.txt && python backend/tests.py'
+                sh 'virtualenv env && . env/bin/activate && pip install -r backend/requirements.txt && python backend/tests.py'
             }
         }
     }
