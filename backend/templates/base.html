@@ -7,7 +7,9 @@
       {% endif %}
     </head>
     <body>
-        <div>exams-io: <a href="/index">Home</a></div>
+        <div>exams-io: <a href="/index">Home</a>
+            {% if user %} <a style="float: right;" href="/logout">Logout</a> {% endif %}
+        </div>
         <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
