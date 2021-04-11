@@ -6,7 +6,7 @@ from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
-from forms import LoginForm, RegistrationForm,AdminDeleteForm
+from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm
 from models import ROLES
 # Class-based application configuration
 
@@ -219,6 +219,28 @@ def admin_registerd_users():
     except:
         flash('Error fetching users')
         return redirect(url_for('index'))
+
+
+@app.route('/admin/updateInfo', methods=['GET', 'POST'])
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_update_info():
+    u = User.objects(username=current_user.username).first()
+    form = AdminUpdateForm()
+    if form.validate_on_submit():
+        User.objects(username=current_user.username).update(
+            set__email = form.email.data,
+            set__first_name= form.first_name.data,
+            set__last_name =form.last_name.data
+        )
+        return render_template("Admin.html",user = u,message = "user updated Successfully") 
+    return render_template("AdminUpdateInfo.html", user = u,form=AdminUpdateForm())
+# except:
+    #     flash('Error updating user')
+    #     return redirect(url_for('admin_update_info'))
+
+
+
 
 if __name__ == '__main__':
     app.run()
