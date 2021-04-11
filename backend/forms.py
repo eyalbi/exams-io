@@ -19,7 +19,15 @@ class RegistrationForm(FlaskForm):
     role = SelectField('select role:', choices = [('Student', 'Student'),('Lecturer', 'Lecturer'),('Admin' ,'Admin')])
     submit = SubmitField('Register')
 
-
+class AdminDeleteForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Delete')
+   
+   
+   
+   
+   
+   
     # def validate_username(self, username):
     #     user = User.query.filter_by(username=username.data).first()
     #     if user is not None:

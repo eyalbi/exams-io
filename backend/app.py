@@ -6,7 +6,7 @@ from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm,AdminDeleteForm
 from models import ROLES
 # Class-based application configuration
 
@@ -180,10 +180,30 @@ def admin_create_user():
         form = RegistrationForm()
         if form.validate_on_submit():
             create_user(form)
+            return render_template("Admin.html",message = "user Created Successfully") 
         return render_template("AdminCreateUser.html", user=u, form=RegistrationForm())
     except:
         flash('Error creating user')
         return redirect(url_for('admin_create_user'))
+
+
+
+
+@app.route('/admin/DeleteUser', methods=['GET', 'POST'])
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_Delete_user():
+    try:
+        u = User.objects(username=current_user.username).first()
+        form = AdminDeleteForm() 
+        if form.validate_on_submit():
+            u = User.objects(username=form.username.data).first()
+            u.delete()
+            return render_template("Admin.html",message = "user Deleted Successfully")    
+        return render_template("AdminDeleteUser.html",user=u,form=AdminDeleteForm())
+    except:
+        flash('Error Deleting user')
+        return redirect(url_for('admin_Delete_user'))
 
 if __name__ == '__main__':
     app.run()
