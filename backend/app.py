@@ -205,5 +205,20 @@ def admin_Delete_user():
         flash('Error Deleting user')
         return redirect(url_for('admin_Delete_user'))
 
+
+
+
+@app.route('/admin/RegisterdUsers')
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_registerd_users():
+    try:
+        u = User.objects().limit(10)
+        return render_template("AdminShowUsers.html",user = u) 
+      
+    except:
+        flash('Error fetching users')
+        return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run()
