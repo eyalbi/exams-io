@@ -8,8 +8,13 @@
     </head>
     <body>
         <div>exams-io: <a href="/index">Home</a>
-            {% if user %} <a style="float: right;" href="/logout">Logout</a> {% endif %}
+            <button type="button" id = "changecolor" >change color</button>
+            <div
+                {% if user %} <a style="float: right;" href="/logout">Logout</a> {% endif %}
+            </div>
+            
         </div>
+      
         <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -21,5 +26,7 @@
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
+    <script type=text/javascript src="{{url_for('static', filename='changeColor.js') }}"></script>   
     </body>
+    
 </html>
