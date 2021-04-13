@@ -8,6 +8,7 @@ from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
+
 from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm
 from models import ROLES
 
@@ -72,6 +73,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.objects(username=form.username.data).first()
+        if user.Blocked == 'true' or user.Blocked == 'True':
+            flash('Your user is blocked adress Admin')
+            return redirect(url_for('login'))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -183,12 +187,11 @@ def admin_create_user():
         form = RegistrationForm()
         if form.validate_on_submit():
             create_user(form)
-            return render_template("Admin.html",message = "user Created Successfully") 
+            return render_template("Admin.html",user = u,message = "user Created Successfully") 
         return render_template("AdminCreateUser.html", user=u, form=RegistrationForm())
     except:
         flash('Error creating user')
         return redirect(url_for('admin_create_user'))
-
 
 
 
@@ -202,11 +205,34 @@ def admin_Delete_user():
         if form.validate_on_submit():
             u = User.objects(username=form.username.data).first()
             u.delete()
-            return render_template("Admin.html",message = "user Deleted Successfully")    
+            return render_template("Admin.html",user =u ,message = "user Deleted Successfully")    
         return render_template("AdminDeleteUser.html",user=u,form=AdminDeleteForm())
     except:
         flash('Error Deleting user')
         return redirect(url_for('admin_Delete_user'))
+
+
+@app.route('/admin/BlockUser', methods=['GET', 'POST'])
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_Block_user():
+    try:
+        u = User.objects(username=current_user.username).first()
+        form = AdminBlockForm() 
+        if form.validate_on_submit():
+            user = User.objects(username=form.username.data).first()
+            if user:
+                if user.role  == 'Admin':
+                    flash("you cant Block Admin User !")
+                    return render_template("Admin.html",user = u)
+                User.objects(username=form.username.data).update(
+                set__Blocked = "true"
+            )
+                return render_template("Admin.html",user = u,message = "user Blocked Successfully")    
+        return render_template("AdminBlockUser.html",user=u,form=AdminBlockForm())
+    except:
+        flash('Error Blocking user')
+        return redirect(url_for('admin_Block_user'))
 
 
 
@@ -219,6 +245,17 @@ def admin_registerd_users():
         u = User.objects().limit(10)
         return render_template("AdminShowUsers.html",user = u) 
       
+    except:
+        flash('Error fetching users')
+        return redirect(url_for('index'))
+
+@app.route('/admin/BlockedUser')
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_Blocked_users():
+    try:
+        u = User.objects().limit(10)
+        return render_template("BlockedUsers.html",user = u) 
     except:
         flash('Error fetching users')
         return redirect(url_for('index'))

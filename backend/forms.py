@@ -22,6 +22,10 @@ class RegistrationForm(FlaskForm):
 class AdminDeleteForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     submit = SubmitField('Delete')
+
+class AdminBlockForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Block user')
    
 class AdminUpdateForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

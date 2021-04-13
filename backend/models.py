@@ -16,6 +16,7 @@ class User(UserMixin, db.Document):
 
     # Relationships
     role = db.StringField(default='', choices = ROLES)
+    Blocked = db.StringField(default='false')
 
     def get_role (self):
         return self.role
