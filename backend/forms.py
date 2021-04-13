@@ -29,6 +29,10 @@ class AdminUpdateForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired()])
     submit = SubmitField('update')
 
+class AdminSendEmailForm(FlaskForm):
+    message = StringField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send Message')
+
 # class AdminUpdateForm(FlaskForm):
 #     username = StringField('Username', validators=[DataRequired()])
 #     email = StringField('Email', validators=[DataRequired(), Email()])

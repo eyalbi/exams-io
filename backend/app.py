@@ -1,16 +1,17 @@
 from models import User
 import os
+import smtplib
+from email.message import EmailMessage
 
 from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for
 from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
-from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm
+from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm
 from models import ROLES
+
 # Class-based application configuration
-
-
 class ConfigClass(object):
     """ Flask application config """
 
@@ -41,6 +42,8 @@ admin_permission = Permission(RoleNeed('Admin'))
 student_permission = Permission(RoleNeed('Student'))
 lecturer_permission = Permission(RoleNeed('Lecturer'))
 
+gmail_user = 'examsiomail@gmail.com'
+gmail_password = '1q2w#E$R'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -240,8 +243,27 @@ def admin_update_info():
     #     return redirect(url_for('admin_update_info'))
 
 
-
-
+@app.route('/admin/sendEmail', methods=['GET','POST'])
+@login_required
+@admin_permission.require(http_exception=403)
+def admin_send_email():
+    u = User.objects(username=current_user.username).first()
+    form = AdminSendEmailForm()
+    if form.validate_on_submit():
+        users = User.objects()
+        emails = [user.email for user in users]
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        msg = EmailMessage()
+        msg.set_content(form.message.data)
+        msg['Subject'] = 'A message from exams-io admin'
+        msg['From'] = gmail_user
+        msg['To'] = emails
+        server.send_message(msg)
+        server.quit()
+        return render_template("AdminSendEmail.html", user=u, form=form)
+    return render_template("AdminSendEmail.html", user=u, form=form)
 
 
 if __name__ == '__main__':
