@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>show Users</h1>
+<ul>
+{% for u in user%}
+    {% if u.Blocked == "true" %}
+        <li>username : {{u.username}} , {{u.first_name}} {{u.last_name}}</li>
+    {% endif %}    
+{% endfor %}
+
+</ul>
+{% endblock %}
