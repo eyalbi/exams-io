@@ -164,6 +164,30 @@ def Lec_Exams():
     return render_template('UploadExams.html')
 
 
+@app.route('/Lecturer/TechSupport', methods=['GET','POST'])
+@login_required
+def Lec_supprot():
+    u = User.objects(username=current_user.username).first()
+    form = AdminSendEmailForm()
+    if form.validate_on_submit():
+        users = User.objects()
+        # emails = [user.email for user in users]
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        msg = EmailMessage()
+        msg.set_content(form.message.data)
+        msg['Subject'] = 'A message from user {0} '.format(current_user.username)
+        msg['From'] = gmail_user
+        msg['To'] = gmail_user
+        server.send_message(msg)
+        server.quit()
+        return render_template("Lecturer.html", user=u)
+    return render_template('AdminSendEmail.html', user=u,form=form)
+
+
+
 @app.route('/Lecturer/Messages')
 @login_required
 def Lec_Messages():
@@ -305,3 +329,6 @@ def admin_send_email():
 
 if __name__ == '__main__':
     app.run()
+
+
+
