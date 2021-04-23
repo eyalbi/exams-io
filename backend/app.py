@@ -191,15 +191,15 @@ def Student_personal_info():
 def Lec_Exams():
     u = User.objects(username=current_user.username).first()
     form = uploadExams()
-    # try:
-    if form.validate_on_submit():
-        create_exam(form)
-        flash('Upload seccesufll!')
-        return redirect(url_for('index'))
-    return render_template('UploadExams.html', title='UploadExams', form=form,user=u)
-    # # except:
-    #     flash('cant upload document')
-    #     return redirect('/index')
+    try:
+        if form.validate_on_submit():
+            create_exam(form)
+            flash('Upload seccesufll!')
+            return redirect(url_for('index'))
+        return render_template('UploadExams.html', title='UploadExams', form=form,user=u)
+    except:
+        flash('cant upload document')
+        return redirect('/index')
 
 
 @app.route('/Lecturer/TechSupport', methods=['GET','POST'])
