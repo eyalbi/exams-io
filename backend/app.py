@@ -101,6 +101,7 @@ def register():
     try:
         form = RegistrationForm()
         if form.validate_on_submit():
+            
             create_user(form)
             flash('Congratulations, you are now a registered user!')
             return redirect(url_for('login'))
@@ -115,6 +116,7 @@ def create_user(form):
     user.first_name = form.first_name.data
     user.last_name = form.last_name.data
     user.set_password(form.password.data)
+    user.avatar = form.avatar.data
     user.save()
 
 

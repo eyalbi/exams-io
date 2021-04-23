@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from flask_mongoengine import MongoEngine
 
 ROLES = ('Student', 'Lecturer', 'Admin')
-
+AVATARS = ('https://robohash.org/3EC.png?set=set4','https://robohash.org/293.png?set=set4','https://robohash.org/ZOB.png?set=set4')
 db = MongoEngine()
 class User(UserMixin, db.Document):
     # User authentication information
@@ -17,7 +17,7 @@ class User(UserMixin, db.Document):
     # Relationships
     role = db.StringField(default='', choices = ROLES)
     Blocked = db.StringField(default='false')
-
+    avatar =  db.StringField(default='', choices = AVATARS)
     def get_role (self):
         return self.role
     def set_password(self, password):

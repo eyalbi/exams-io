@@ -17,6 +17,7 @@ class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
     role = SelectField('select role:', choices = [('Student', 'Student'),('Lecturer', 'Lecturer'),('Admin' ,'Admin')])
+    avatar = SelectField('select avatar:', choices = [('https://robohash.org/3EC.png?set=set4','cat1'),('https://robohash.org/293.png?set=set4','cat2'),('https://robohash.org/ZOB.png?set=set4','cat3')])
     submit = SubmitField('Register')
 
 class AdminDeleteForm(FlaskForm):
