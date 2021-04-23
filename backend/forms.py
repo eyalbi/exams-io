@@ -43,6 +43,10 @@ class StudentMessage(FlaskForm):
     message = StringField('Message', validators=[DataRequired()])
     submit = SubmitField('Send Message')
 
+class uploadExams(FlaskForm):
+    Exam_name = StringField(default='Exam name')
+    exam_pdf = StringField(default='exam url')
+    submit = SubmitField('upload') 
 # class AdminUpdateForm(FlaskForm):
 #     username = StringField('Username', validators=[DataRequired()])
 #     email = StringField('Email', validators=[DataRequired(), Email()])

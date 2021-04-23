@@ -26,4 +26,7 @@ class User(UserMixin, db.Document):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
+class Exams(UserMixin,db.Document):
+    Exam_name = db.StringField(default='')
+    exam_pdf = db.StringField(default='') 
+   

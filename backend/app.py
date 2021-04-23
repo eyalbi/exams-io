@@ -1,4 +1,4 @@
-from models import User
+from models import User,Exams
 import os
 import smtplib
 from email.message import EmailMessage
@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
 
-from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage
+from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage,uploadExams
 from models import ROLES
 
 # Class-based application configuration
@@ -110,6 +110,11 @@ def register():
         flash('username Already exists')
         return redirect('/register')
 
+def create_exam(form):
+    exam = Exams(Exam_name=form.Exam_name.data, exam_pdf=form.exam_pdf.data)
+    exam.save()
+
+
 def create_user(form):
     user = User(username=form.username.data, email=form.email.data)
     user.role = form.role.data
@@ -181,10 +186,20 @@ def Student_personal_info():
     return render_template("PersonalInfo.html", title='info Page', user=u)
 
 
-@app.route('/Lecturer/Exams')
+@app.route('/Lecturer/Exams', methods=['GET','POST'])
 @login_required
 def Lec_Exams():
-    return render_template('UploadExams.html')
+    u = User.objects(username=current_user.username).first()
+    form = uploadExams()
+    # try:
+    if form.validate_on_submit():
+        create_exam(form)
+        flash('Upload seccesufll!')
+        return redirect(url_for('index'))
+    return render_template('UploadExams.html', title='UploadExams', form=form,user=u)
+    # # except:
+    #     flash('cant upload document')
+    #     return redirect('/index')
 
 
 @app.route('/Lecturer/TechSupport', methods=['GET','POST'])

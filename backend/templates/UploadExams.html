@@ -1,1 +1,23 @@
-<h1>exams</h1>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload exams</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.Exam_name.label }}<br>
+        {{ form.Exam_name(size=100) }}<br>
+        {% for error in form.Exam_name.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.exam_pdf.label }}<br>
+        {{ form.exam_pdf(size=1000) }}<br>
+        {% for error in form.exam_pdf.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+   <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
