@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
 
-from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm
+from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage
 from models import ROLES
 
 # Class-based application configuration
@@ -141,10 +141,31 @@ def Student_exams():
     return render_template("exams.html", title='Exams Page')
 
 
-@app.route('/Student/Messages')
+
+
+@app.route('/Student/Messages', methods=['GET','POST'])
 @login_required
 def Student_messeges():
-    return render_template("messages.html", title='Messages Page')
+    u = User.objects(username=current_user.username).first()
+    form = StudentMessage()
+    if form.validate_on_submit():
+        try:
+            user = User.objects(username=form.lecturer.data,role = 'Lecturer').first()
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(gmail_user, gmail_password)
+            msg = EmailMessage()
+            msg.set_content(form.message.data)
+            msg['Subject'] = 'A message from user {0} '.format(current_user.username)
+            msg['From'] = gmail_user
+            msg['To'] = user.email
+            server.send_message(msg)
+            server.quit()
+        except:
+            flash("no such Lecturer")
+            return render_template("messages.html", title='Messages Page',user =u,form = StudentMessage())
+    return render_template("messages.html", title='Messages Page',form = form,user = u)
+       
 
 
 @app.route('/Student/Grades')
