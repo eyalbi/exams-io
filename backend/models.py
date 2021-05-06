@@ -29,4 +29,5 @@ class User(UserMixin, db.Document):
 class Exams(UserMixin,db.Document):
     Exam_name = db.StringField(default='')
     exam_pdf = db.StringField(default='') 
+    exam_answer = db.StringField(default='')
    

@@ -3,6 +3,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 
+
 from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for
 from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
@@ -111,7 +112,7 @@ def register():
         return redirect('/register')
 
 def create_exam(form):
-    exam = Exams(Exam_name=form.Exam_name.data, exam_pdf=form.exam_pdf.data)
+    exam = Exams(Exam_name=form.Exam_name.data, exam_pdf=form.exam_pdf.data,exam_answer = form.exam_answer.data)
     exam.save()
 
 
@@ -143,7 +144,9 @@ def index():
 @app.route('/Student/Exams')
 @login_required
 def Student_exams():
-    return render_template("exams.html", title='Exams Page')
+    exams = Exams.objects()
+    u = User.objects(username=current_user.username).first()
+    return render_template("exams.html", title='Exams Page',exams = exams,user = u)
 
 
 
@@ -229,7 +232,10 @@ def Lec_supprot():
 @app.route('/Lecturer/Messages')
 @login_required
 def Lec_Messages():
-    return render_template("messages.html", title='Messages Page')
+    u = User.objects(username=current_user.username).first()
+    mail = u.email
+    domain = "https://" + mail.split("@")[-1]
+    return render_template("LeC_messages.html", title='Messages Page',user = u,domain= domain)
 
 
 @app.route('/Lecturer/PersonalInfo')

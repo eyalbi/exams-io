@@ -44,8 +44,9 @@ class StudentMessage(FlaskForm):
     submit = SubmitField('Send Message')
 
 class uploadExams(FlaskForm):
-    Exam_name = StringField(default='Exam name')
-    exam_pdf = StringField(default='exam url')
+    Exam_name = StringField(default='')
+    exam_pdf = StringField(default='')
+    exam_answer = StringField(default='')
     submit = SubmitField('upload') 
 # class AdminUpdateForm(FlaskForm):
 #     username = StringField('Username', validators=[DataRequired()])
