@@ -22,10 +22,11 @@ class ConfigClass(object):
 
     # Flask-MongoEngine settings
     MONGODB_SETTINGS = {
-        'host': 'localhost:27017',
+        # 'host': 'mongodb://bendbil.byfy8.mongodb.net/exams-io?retryWrites=true&w=majority',
         'username': 'apiuser',
-        'password': 'apipassword',
-        'db': 'exams-io'
+        'password': '1234abcd',
+        'db': 'exams-io',
+        'host': 'mongodb+srv://apiuser:1234abcd@bendbil.byfy8.mongodb.net/exams-io?retryWrites=true&w=majority'
     }
 
 
@@ -74,11 +75,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.objects(username=form.username.data).first()
-        if user.Blocked == 'true' or user.Blocked == 'True':
-            flash('Your user is blocked adress Admin')
-            return redirect(url_for('login'))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
+            return redirect(url_for('login'))
+        if user.Blocked == 'true' or user.Blocked == 'True':
+            flash('Your user is blocked adress Admin')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         identity_changed.send(current_app._get_current_object(),
