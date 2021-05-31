@@ -6,49 +6,13 @@
     {{ form.hidden_tag() }}
     <p>
     {%for x in form.Quiz%}
-    {{x.form.Question.label}} {{ x.form.Question}}
-    {{x.form.Correct_answer.label}} {{ x.form.Correct_answer}}
-
-    
+    {{x.form.Question.label}} {{ x.form.Question}}<br>
+    {{x.form.Correct_answer.label}} {{ x.form.Correct_answer}}<br>
+    {%for z in x.form.Answers%}
+    {{z.label}} {{z}}<br>
     {% endfor %}
-    <!-- <p>
-        {{ form.Question.label }}<br>
-        {{ form.Question(size=100) }}<br>
-        {% for error in form.Question.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.Correct_answer.label }}<br>
-        {{ form.Correct_answer(size=1000) }}<br>
-        {% for error in form.Correct_answer.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        <div>
-            <label for="Question1">Question1:</label>
-            <input type="text" id="Question1" name="Question1" required
-            minlength="4" maxlength="8" size="10">
-        </div>
-        <div>
-            <label for="Question2">Question2:</label>
-            <input type="text" id="Question2" name="Question2" required
-            minlength="4" maxlength="8" size="10">
-        </div>
-        <div>
-            <label for="Question3">Question3:</label>
-            <input type="text" id="Question3" name="Question3" required
-            minlength="4" maxlength="8" size="10">
-        </div>
-        <div>
-            <label for="Question4">Question4:</label>
-            <input type="text" id="Question4" name="Question4" required
-            minlength="4" maxlength="8" size="10">
-        </div>
-    </p>
-    <p> -->
-        
+    {% endfor %}
+
     </p>
    <p>{{ form.submit() }}</p>
 </form>

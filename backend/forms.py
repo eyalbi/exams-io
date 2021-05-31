@@ -52,13 +52,15 @@ class uploadExams(FlaskForm):
 
 class QuestionCreateForm(FlaskForm):
     Question = StringField(default='')
-    Answers = FieldList(StringField(default=''))
+    Answers = FieldList(StringField(default=''), min_entries=4)
     Correct_answer = StringField(default='')
     submit = SubmitField('create question') 
 
 class QuizzForm(FlaskForm):
     Quiz = FieldList(FormField(QuestionCreateForm),min_entries = 4)
     submit = SubmitField('create question') 
+
+
 # class AdminUpdateForm(FlaskForm):
 #     username = StringField('Username', validators=[DataRequired()])
 #     email = StringField('Email', validators=[DataRequired(), Email()])

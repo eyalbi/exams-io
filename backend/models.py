@@ -26,17 +26,19 @@ class User(UserMixin, db.Document):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Exams(UserMixin,db.Document):
+class Exams(db.Document):
     Exam_name = db.StringField(default='')
     exam_pdf = db.StringField(default='') 
     exam_answer = db.StringField(default='')
 
 
-class Quizz(UserMixin,db.Document):
-    Lec_name = db.StringField(default='')
-    quizname = db.StringField(default='')
-class Quiz_question(UserMixin,db.Document):
+class Quiz_question(db.EmbeddedDocument):
     quizname = db.StringField(default='')
     Question = db.StringField(default='')
     Correct_answer = db.StringField(default='')
     Answers = db.ListField(db.StringField(max_length = 100))
+
+class Quizz(db.Document):
+    Lec_name = db.StringField(default='')
+    quizname = db.StringField(default='')
+    questions = db.ListField(db.EmbeddedDocumentField(Quiz_question))
