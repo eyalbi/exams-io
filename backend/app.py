@@ -1,22 +1,23 @@
-from models import User,Exams
+from models import User,Exams,Quiz_question,Quizz
 import os
 import smtplib
 from email.message import EmailMessage
 
 
-from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for
+from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for,session
+
 from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
 
-from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage,uploadExams
+from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage,uploadExams,QuestionCreateForm,QuizzForm
 from models import ROLES
 
 # Class-based application configuration
 class ConfigClass(object):
     """ Flask application config """
-
+    
     # Flask settings
     SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
 
@@ -238,6 +239,31 @@ def Lec_Messages():
     domain = "https://" + mail.split("@")[-1]
     return render_template("LeC_messages.html", title='Messages Page',user = u,domain= domain)
 
+
+
+
+
+
+@app.route('/Lecturer/CreateQuiz', methods=['GET','POST'])
+@login_required
+def Lec_CreateQuiz():
+    u = User.objects(username=current_user.username).first()
+    form = QuizzForm() 
+    # try:
+    if form.validate_on_submit():
+        answers = [request.form['Question1'],request.form['Question2'],request.form['Question3'],request.form['Question4']]
+        ques = Quiz_question(Question = form.Question.data, Correct_answer = form.Correct_answer.data,Answers = answers)
+        ques.save()
+        return redirect('/index')
+    return render_template('createquiz.html', title='createquiz', form=form,user=u)
+    # except:
+    #     flash('cant upload document')
+    #     return redirect('/index')
+
+
+
+
+    
 
 @app.route('/Lecturer/PersonalInfo')
 @login_required

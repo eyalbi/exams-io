@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField,FieldList,FormField
+
 from wtforms.validators import DataRequired, Email, EqualTo
 from models import ROLES,User
 class LoginForm(FlaskForm):
@@ -48,6 +49,16 @@ class uploadExams(FlaskForm):
     exam_pdf = StringField(default='')
     exam_answer = StringField(default='')
     submit = SubmitField('upload') 
+
+class QuestionCreateForm(FlaskForm):
+    Question = StringField(default='')
+    Answers = FieldList(StringField(default=''))
+    Correct_answer = StringField(default='')
+    submit = SubmitField('create question') 
+
+class QuizzForm(FlaskForm):
+    Quiz = FieldList(FormField(QuestionCreateForm),min_entries = 4)
+    submit = SubmitField('create question') 
 # class AdminUpdateForm(FlaskForm):
 #     username = StringField('Username', validators=[DataRequired()])
 #     email = StringField('Email', validators=[DataRequired(), Email()])

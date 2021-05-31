@@ -30,4 +30,13 @@ class Exams(UserMixin,db.Document):
     Exam_name = db.StringField(default='')
     exam_pdf = db.StringField(default='') 
     exam_answer = db.StringField(default='')
-   
+
+
+class Quizz(UserMixin,db.Document):
+    Lec_name = db.StringField(default='')
+    quizname = db.StringField(default='')
+class Quiz_question(UserMixin,db.Document):
+    quizname = db.StringField(default='')
+    Question = db.StringField(default='')
+    Correct_answer = db.StringField(default='')
+    Answers = db.ListField(db.StringField(max_length = 100))
