@@ -251,9 +251,16 @@ def Lec_CreateQuiz():
     form = QuizzForm() 
     # try:
     if form.validate_on_submit():
-        #answers = [request.form['Question1'],request.form['Question2'],request.form['Question3'],request.form['Question4']]
-        #ques = Quiz_question(Question = form.Quiz.Question.data, Correct_answer = form.Quiz.Correct_answer.data,Answers = answers)
-        #ques.save()
+        for q in form.Quiz:
+            answers  = list(map(lambda a: a.data, q.Answers))
+            ques = Quiz_question(Question=q.Question.data, Correct_answer=q.Correct_answer.data, Answers=answers)
+        quiz = Quizz(Lec_name=current_user.username, quizname=form.Quizz_name.data)
+        quiz.questions.append(ques)
+        quiz.save()
+        # answers = [request.form['Question1'],request.form['Question2'],request.form['Question3'],request.form['Question4']]
+        # ques = Quiz_question(Question = form.Quiz.Question.data, Correct_answer = form.Quiz.Correct_answer.data,Answers = answers)
+        # ques.save()
+        
         return redirect('/index')
     return render_template('createquiz.html', title='createquiz', form=form,user=u)
     # except:

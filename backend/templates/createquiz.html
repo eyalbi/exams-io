@@ -4,8 +4,10 @@
 <h1>Upload exams</h1>
 <form action="" method="post">
     {{ form.hidden_tag() }}
+    <p>{{form.Quizz_name.label}} {{form.Quizz_name}}</p>
     <p>
     {%for x in form.Quiz%}
+    {{x.hidden_tag()}}
     {{x.form.Question.label}} {{ x.form.Question}}<br>
     {{x.form.Correct_answer.label}} {{ x.form.Correct_answer}}<br>
     {%for z in x.form.Answers%}

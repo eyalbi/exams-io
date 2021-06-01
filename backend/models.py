@@ -33,7 +33,6 @@ class Exams(db.Document):
 
 
 class Quiz_question(db.EmbeddedDocument):
-    quizname = db.StringField(default='')
     Question = db.StringField(default='')
     Correct_answer = db.StringField(default='')
     Answers = db.ListField(db.StringField(max_length = 100))
