@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Quizzes</h1>
+    {%if quizzes%}
+        <ul>
+            {%for e in quizzes %}
+            <li>{{ e.quizname}}</li> 
+         {% endfor %}
+        </ul>
+    {%endif%}
+    
+{% endblock %}

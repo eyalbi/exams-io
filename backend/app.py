@@ -241,8 +241,12 @@ def Lec_Messages():
 
 
 
-
-
+@app.route('/Lecturer/Quizzes', methods=['GET'])
+@login_required
+def Lec_Quizzes():
+    u = User.objects(username=current_user.username).first()
+    quizzes = Quizz.objects(Lec_name=u.username)
+    return render_template("Quizzes.html", user=u, quizzes=quizzes)
 
 @app.route('/Lecturer/CreateQuiz', methods=['GET','POST'])
 @login_required
