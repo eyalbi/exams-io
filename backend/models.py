@@ -1,3 +1,4 @@
+from email.policy import default
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_mongoengine import MongoEngine
@@ -41,3 +42,8 @@ class Quizz(db.Document):
     Lec_name = db.StringField(default='')
     quizname = db.StringField(default='')
     questions = db.ListField(db.EmbeddedDocumentField(Quiz_question))
+
+class Quizz_Answered(db.Document):
+    student = db.StringField(default='')
+    quizz = db.StringField(default='')
+    answers = db.ListField(db.StringField(default=''))

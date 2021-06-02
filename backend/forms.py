@@ -56,7 +56,7 @@ class QuestionCreateForm(FlaskForm):
     Correct_answer = StringField(default='')
 
 class QuizzForm(FlaskForm):
-    Quiz = FieldList(FormField(QuestionCreateForm),min_entries = 1)
+    Quiz = FieldList(FormField(QuestionCreateForm),min_entries = 3)
     Quizz_name = StringField('Quizz Name')
     submit = SubmitField('create question') 
 
