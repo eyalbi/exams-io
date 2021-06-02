@@ -1,4 +1,4 @@
-from models import User,Exams,Quiz_question,Quizz
+from models import User,Exams,Quiz_question,Quizz,StudentGrade
 import os
 import smtplib
 from email.message import EmailMessage
@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
 
-from forms import LoginForm, RegistrationForm,AdminDeleteForm, AdminUpdateForm, AdminSendEmailForm,StudentMessage,uploadExams,QuestionCreateForm,QuizzForm
+from forms import LoginForm, RegistrationForm,AdminDeleteForm,LUpdateGrade ,AdminUpdateForm, AdminSendEmailForm,StudentMessage,uploadExams,QuestionCreateForm,QuizzForm,StudentSelectQuiz,StudentQuizForm
 from models import ROLES
 
 # Class-based application configuration
@@ -177,7 +177,65 @@ def Student_messeges():
     return render_template("messages.html", title='Messages Page',form = form,user = u)
        
 
+@app.route('/Student/Quizes',methods=['GET','POST'])
+@login_required
+def Student_Quizes():
+    u = User.objects(username=current_user.username).first()
+    form = StudentSelectQuiz()
+    if form.validate_on_submit():
+        Quizes = Quizz.objects(Lec_name = form.Lec_name.data)
+        return render_template("SQuizes.html", title='Quizes Page',Quizes = Quizes,user = u)
+    return render_template("Search_quiz.html", title='Quizes Page',user = u, form = form)
+       
+@app.route('/Student/takeQuiz',methods=['GET','POST'])
+@login_required
+def Studnet_quiz_try():
+    u = User.objects(username=current_user.username).first()
+    form = StudentQuizForm(request.form['quiz'])
+    Quiz = Quizz.objects(quizname = request.form['quiz']).first()
+    if form.validate_on_submit():
+        print(request.form['1'])
+        SGrade = StudentGrade(StudentName = current_user.username,quizname = form.quizname)
+        grade = 0
+        i = 0 
+        for q in Quiz.questions:
+            if q.Correct_answer == request.form[i]:
+                grade += 1
+            i += 1
+        SGrade.Grade = (grade / len(Quiz.questions)) * 100
+        lec = User.objects(username = Quiz.Lec_name).first()
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        msg = EmailMessage()
+        msg.set_content(form.message.data)
+        msg['Subject'] = 'Student {0} did your test and got {1}'.format(current_user.username,SGrade.Grade)
+        msg['From'] = gmail_user
+        print(lec.email)
 
+        msg['To'] = lec.email
+        server.send_message(msg)
+        server.quit()
+        return redirect('/')
+    return render_template("AnswerQuiz.html", title='Quizes Page',user = u, form = form, Quiz = Quiz)
+
+
+
+@app.route('/Student/Quizgrade',methods=['GET','POST'])
+@login_required
+def get_grade():
+    Quiz = Quizz.objects(quizname = request.form['quiz']).first()
+    SGrade = StudentGrade(StudentName = current_user.username,quizname = request.form['quiz'])
+    grade = 0
+    i = 0 
+    for q in Quiz.questions:
+        if q.Correct_answer == request.form.getlist('checked')[i]:
+            grade += 1
+        i += 1
+    SGrade.Grade =str((grade / len(Quiz.questions)) * 100)
+    SGrade.save()
+    return redirect('/')
+   
 @app.route('/Student/Grades')
 @login_required
 def Student_Grades():
@@ -204,7 +262,7 @@ def Lec_Exams():
         return render_template('UploadExams.html', title='UploadExams', form=form,user=u)
     except:
         flash('cant upload document')
-        return redirect('/index')
+        return redirect('index')
 
 
 @app.route('/Lecturer/TechSupport', methods=['GET','POST'])
@@ -261,9 +319,7 @@ def Lec_CreateQuiz():
             ques = Quiz_question(Question=q.Question.data, Correct_answer=q.Correct_answer.data, Answers=answers)
             quiz.questions.append(ques)
         quiz.save()
-        # answers = [request.form['Question1'],request.form['Question2'],request.form['Question3'],request.form['Question4']]
-        # ques = Quiz_question(Question = form.Quiz.Question.data, Correct_answer = form.Quiz.Correct_answer.data,Answers = answers)
-        # ques.save()
+       
         
         return redirect('/index')
     return render_template('createquiz.html', title='createquiz', form=form,user=u)
@@ -273,7 +329,19 @@ def Lec_CreateQuiz():
 
 
 
-
+@app.route('/Lecturer/EditGrade',methods = ['GET','POST'])
+@login_required
+def Lec_edit_grade():
+    u = User.objects(username=current_user.username).first()
+    form = LUpdateGrade()
+    if form.validate_on_submit():
+        if Quizz.objects(Lec_name = current_user.username, quizname = form.quizname.data).first():
+            StudentGrade.objects(StudentName = form.StudentName.data,quizname = form.quizname.data).update(
+                set__Grade = form.new_grade.data
+            )
+        flash("Grade was edited seccesfuly")
+        return redirect('/')
+    return render_template("EditGrades.html", title='info Page', user=u,form = form)
     
 
 @app.route('/Lecturer/PersonalInfo')

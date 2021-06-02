@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Find Quiz</h1>
+    <form action="{{url_for('Studnet_quiz_try')}}" method="post">
+        <ul>
+            {%for q in Quizes%}
+               <li> {{q.quizname}} <input type = "checkbox"  name = "quiz" value = "{{q.quizname}}"></li> 
+            {% endfor %}
+        </ul>
+        <input type = "submit" value = "take quizz">
+    </form>
+{% endblock %}

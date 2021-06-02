@@ -52,13 +52,30 @@ class uploadExams(FlaskForm):
 
 class QuestionCreateForm(FlaskForm):
     Question = StringField(default='')
-    Answers = FieldList(StringField(default=''), min_entries=2)
+    Answers = FieldList(StringField(default=''), min_entries=4)
     Correct_answer = StringField(default='')
 
 class QuizzForm(FlaskForm):
     Quiz = FieldList(FormField(QuestionCreateForm),min_entries = 3)
     Quizz_name = StringField('Quizz Name')
-    submit = SubmitField('create question') 
+    submit = SubmitField('create Quiz') 
+
+class StudentSelectQuiz(FlaskForm):
+    Lec_name = StringField(default='Enter Lecturer Username')
+    submit = SubmitField('Find Quizes')
+
+class StudentQuizForm(FlaskForm):
+   def __init__(self,quiz):
+       super().__init__()
+       self.quizname = quiz
+   quizname =StringField(default = "")
+   submit = SubmitField('Finish Quiz')
+
+class LUpdateGrade(FlaskForm):
+   StudentName = StringField(default = "")
+   quizname =StringField(default = "")
+   new_grade = StringField(default = "")
+   submit = SubmitField('Finish Quiz')
 
 
 # class AdminUpdateForm(FlaskForm):

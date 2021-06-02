@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Quiz : {{Quiz.quizname}}</h2>
+    <form action="{{url_for('get_grade')}}" method="post">
+        {{form.hidden_tag()}}
+        
+       
+        {%for q in Quiz.questions%}
+           <h3>{{q.Question}}</h3>
+        </br>
+           
+            {%for a in q.Answers%}
+            <div>
+                <input type = "checkbox"  name = "checked" value = "{{a}}">  {{a}} 
+            </div>
+           
+            {% endfor %}
+
+        
+        {%endfor%}
+        
+        <input type="hidden" name = "quiz" value = "{{Quiz.quizname}}">
+    {{form.submit()}}   
+    </form>
+{% endblock %}
