@@ -7,7 +7,7 @@ AVATARS = ('https://robohash.org/3EC.png?set=set4','https://robohash.org/293.png
 db = MongoEngine()
 class User(UserMixin, db.Document):
     # User authentication information
-    username = db.StringField(default='')
+    username = db.StringField(default='', unique=True)
     password_hash = db.StringField()
     email = db.EmailField()
     # User information
@@ -27,7 +27,7 @@ class User(UserMixin, db.Document):
         return check_password_hash(self.password_hash, password)
 
 class Exams(db.Document):
-    Exam_name = db.StringField(default='')
+    Exam_name = db.StringField(default='', unique=True)
     exam_pdf = db.StringField(default='') 
     exam_answer = db.StringField(default='')
 
@@ -39,7 +39,7 @@ class Quiz_question(db.EmbeddedDocument):
 
 class Quizz(db.Document):
     Lec_name = db.StringField(default='')
-    quizname = db.StringField(default='')
+    quizname = db.StringField(default='', unique=True)
     questions = db.ListField(db.EmbeddedDocumentField(Quiz_question))
 
 
