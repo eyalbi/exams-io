@@ -211,16 +211,16 @@ def Studnet_quiz_try():
             i += 1
         SGrade.Grade = (grade / len(Quiz.questions)) * 100
         lec = User.objects(username=Quiz.Lec_name).first()
+        print(lec.username)
+
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(gmail_user, gmail_password)
         msg = EmailMessage()
-        msg.set_content(form.message.data)
+        msg.set_content("empty")
         msg['Subject'] = 'Student {0} did your test and got {1}'.format(
             current_user.username, SGrade.Grade)
         msg['From'] = gmail_user
-        print(lec.email)
-
         msg['To'] = lec.email
         server.send_message(msg)
         server.quit()
@@ -245,11 +245,47 @@ def get_grade():
     return redirect('/')
 
 
+@app.route('/Student/GradesAverage')
+@login_required
+def Student_Grades_average():
+    grades = StudentGrade.objects(StudentName = current_user.username)
+    counter = 0 
+    avg = 0
+    avgDic = {}
+    for Q in grades:
+        Qgrades = StudentGrade.objects(quizname = Q.quizname)
+        for q in Qgrades:
+            avg += float(q.Grade)
+            counter += 1
+        avgDic[Q.quizname] = avg / counter
+    return render_template("GradesAverage.html", title='Grades Page',avgDic = avgDic)
+
 @app.route('/Student/Grades')
 @login_required
 def Student_Grades():
-    return render_template("Grades.html", title='Grades Page')
+    grades = StudentGrade.objects(StudentName = current_user.username)
+    GDic = dict((q.quizname,q.Grade) for q in grades)
+    return render_template("Grades.html", title='Grades Page',GDic = GDic)
 
+@app.route('/Student/emailGrades')
+@login_required
+def Student_Grades_email():
+    grades = StudentGrade.objects(StudentName = current_user.username)
+    GDic = dict((q.quizname,q.Grade) for q in grades)
+    gradeMessage = ""
+    for x in GDic:
+        gradeMessage += "{0} : {1}\n".format(x,GDic[x])
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(gmail_user, gmail_password)
+    msg = EmailMessage()
+    msg.set_content(gradeMessage)
+    msg['Subject'] = 'your Grades'
+    msg['From'] = gmail_user
+    msg['To'] = current_user.email
+    server.send_message(msg)
+    server.quit()
+    return render_template("Grades.html", title='Grades Page',GDic = GDic)
 
 @app.route('/Student/PersonalInfo')
 @login_required

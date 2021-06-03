@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Grades Average</h1>
+{% for x in avgDic %}
+    <div> 
+        {{x}} Average is : {{avgDic[x]}} 
+    </div>
+
+
+
+{% endfor %}
+{% endblock %}

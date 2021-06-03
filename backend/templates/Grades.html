@@ -1,1 +1,14 @@
-ggggggggg
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Grades Average</h1>
+{% for g in GDic %}
+    <div> 
+       {{g}} Grade - {{GDic[g]}} 
+    </div>
+{% endfor %}
+<div>
+    <a href="{{url_for('Student_Grades_email')}}">Grades</a>
+</div>
+
+{% endblock %}
