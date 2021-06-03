@@ -79,8 +79,28 @@ class TestLecPersonalInfo(unittest.TestCase):
                             data=dict(username="testuser", password="1234", remember_me=False, submit="Sign In"),
                             follow_redirects=True)
             rv = self.app.get('/Lecturer/PersonalInfo', follow_redirects=True)
-            print(rv.data)
+            self.assertEqual(rv.status, '200 OK')
 
+class TestStudentGrades(unittest.TestCase):
+    def setUp(self):
+        app.testing = True
+        self.app = app.test_client()
+        
+    def test_grades(self):
+        rv = self.app.get('/Student/Grades')
+        self.assertEqual(rv.status, '302 FOUND')
+
+
+
+class TestSupport(unittest.TestCase):
+    def setUp(self):
+        app.testing = True
+        self.app = app.test_client()
+        
+    def test_grades(self):
+        rv = self.app.get('/Lecturer/TechSupport')
+        self.assertEqual(rv.status, '302 FOUND')
+        
 
 if __name__ == '__main__':
     unittest.main()
