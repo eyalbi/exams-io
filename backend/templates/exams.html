@@ -5,8 +5,8 @@
     {%if exams%}
         <ul>
             {%for e in exams %}
-            <li><a href = {{e.exam_pdf}}>{{ e.Exam_name}}</a></li> 
-            <li><a href = {{e.exam_answer}}>{{ e.Exam_name + "solution"}}</a></li>
+            <li><a href = {{url_for('downloadFile', path=e.exam_pdf)}}>{{ e.Exam_name}}</a></li> 
+            <li><a href = {{url_for('downloadFile', path=e.exam_answer)}}>{{ e.Exam_name + " solution"}}</a></li>
          {% endfor %}
         </ul>
     {%endif%}

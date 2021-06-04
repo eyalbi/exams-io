@@ -4,18 +4,19 @@ import smtplib
 from email.message import EmailMessage
 
 
-from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for, session
+from flask import Flask, current_app, flash, Response, request, render_template_string, render_template, jsonify, redirect, url_for, session, send_file
 
 from flask_mongoengine import MongoEngine
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
+from werkzeug.utils import secure_filename
 
 from forms import LoginForm, RegistrationForm, AdminDeleteForm, LUpdateGrade, AdminUpdateForm, AdminSendEmailForm, StudentMessage, uploadExams, QuestionCreateForm, QuizzForm, StudentSelectQuiz, StudentQuizForm,AdminBlockForm
 from models import ROLES
 
 # Class-based application configuration
-
+PATH = './uploads/'
 
 class ConfigClass(object):
     """ Flask application config """
@@ -118,8 +119,16 @@ def register():
 
 
 def create_exam(form):
+    exam_pdf = form.exam_pdf.data
+    exam_answer = form.exam_answer.data
+    exam_pdf_filename = secure_filename(exam_pdf.filename)
+    exam_answer_filename = secure_filename(exam_answer.filename)
+
+    exam_pdf.save(os.path.join(PATH, exam_pdf_filename))
+    exam_answer.save(os.path.join(PATH, exam_answer_filename))
+
     exam = Exams(Exam_name=form.Exam_name.data,
-                 exam_pdf= "file:///" + form.exam_pdf.data, exam_answer="file:///"+ form.exam_answer.data)
+                 exam_pdf=exam_pdf_filename, exam_answer=exam_answer_filename)
     exam.save()
 
 
@@ -132,6 +141,12 @@ def create_user(form):
     user.avatar = form.avatar.data
     user.save()
 
+
+@app.route('/download')
+def downloadFile ():
+    #For windows you need to use drive name [ex: F:/Example.pdf]
+    path = os.path.join(PATH, request.args['path'])
+    return send_file(path, as_attachment=True)
 
 @app.route('/')
 @app.route('/index')
@@ -302,10 +317,11 @@ def Lec_Exams():
     try:
         if form.validate_on_submit():
             create_exam(form)
-            flash('Upload seccesufll!')
+            flash('Upload succesufll!')
             return redirect(url_for('index'))
         return render_template('UploadExams.html', title='UploadExams', form=form, user=u)
-    except:
+    except Exception as ex:
+        print(ex)
         flash('cant upload document')
         return redirect('index')
 

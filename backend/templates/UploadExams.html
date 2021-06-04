@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Upload exams</h1>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data"> 
     {{ form.hidden_tag() }}
     <p>
         {{ form.Exam_name.label }}<br>
@@ -13,14 +13,14 @@
     </p>
     <p>
         {{ form.exam_pdf.label }}<br>
-        {{ form.exam_pdf(size=1000) }}<br>
+        {{ form.exam_pdf() }}<br>
         {% for error in form.exam_pdf.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
     <p>
         {{ form.exam_answer.label }}<br>
-        {{ form.exam_answer(size=1000) }}<br>
+        {{ form.exam_answer() }}<br>
         {% for error in form.exam_answer.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
