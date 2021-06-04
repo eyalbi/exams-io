@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_principal import Principal, Permission, RoleNeed, identity_changed, identity_loaded, Identity, AnonymousIdentity, UserNeed
 
-from forms import LoginForm, RegistrationForm, AdminDeleteForm, LUpdateGrade, AdminUpdateForm, AdminSendEmailForm, StudentMessage, uploadExams, QuestionCreateForm, QuizzForm, StudentSelectQuiz, StudentQuizForm
+from forms import LoginForm, RegistrationForm, AdminDeleteForm, LUpdateGrade, AdminUpdateForm, AdminSendEmailForm, StudentMessage, uploadExams, QuestionCreateForm, QuizzForm, StudentSelectQuiz, StudentQuizForm,AdminBlockForm
 from models import ROLES
 
 # Class-based application configuration
@@ -119,7 +119,7 @@ def register():
 
 def create_exam(form):
     exam = Exams(Exam_name=form.Exam_name.data,
-                 exam_pdf=form.exam_pdf.data, exam_answer=form.exam_answer.data)
+                 exam_pdf= "file:///" + form.exam_pdf.data, exam_answer="file:///"+ form.exam_answer.data)
     exam.save()
 
 

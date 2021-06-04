@@ -6,6 +6,7 @@
         <ul>
             {%for e in exams %}
             <li><a href = {{e.exam_pdf}}>{{ e.Exam_name}}</a></li> 
+            <li><a href = {{e.exam_answer}}>{{ e.Exam_name + "solution"}}</a></li>
          {% endfor %}
         </ul>
     {%endif%}
