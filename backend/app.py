@@ -1,3 +1,4 @@
+# pylint: disable-all
 from models import User, Exams, Quiz_question, Quizz, StudentGrade
 import os
 import smtplib
