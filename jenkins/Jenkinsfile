@@ -40,11 +40,25 @@ pipeline {
                  sh '''
                     python -m venv .venv
                     . .venv/bin/activate
-                    pip install -r backend/requirements.txt
+                    cd backend
                     coverage run -m unittest discover
                     coverage report -m
                 '''
             }
+            stage('pylint') {
+            agent {
+                docker {
+                    image 'python:3.9.2' 
+                }
+            }
+            steps {
+                 sh '''
+                    python -m venv .venv
+                    . .venv/bin/activate
+                    pylint -ry backend/app.py
+                '''
+            }
+        }
         }
     }
 }
